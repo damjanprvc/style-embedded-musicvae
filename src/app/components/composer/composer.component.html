@@ -1,0 +1,161 @@
+<div class="composer-container" fxLayout="column" fxLayoutAlign="space-around center">
+<!--  <h1 class="mat-display-3">VAE Composer</h1>-->
+
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Checkpoint</mat-label>
+      <mat-select [(value)]="selectedCheckpoint.url" (selectionChange)="reloadModel()">
+        <mat-option *ngFor="let checkpoint of modelCheckpoints" [value]="checkpoint.url">{{checkpoint.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button style="margin: 0 3em" mat-fab color="primary" (click)="playSequence()" [disabled]="currentNoteSequence === null"><mat-icon>{{!isPlaying ? 'play_arrow' : 'stop'}}</mat-icon></button>
+
+    <mat-form-field appearance="outline" style="max-width: 100px">
+      <mat-label>Tempo</mat-label>
+      <input matInput type="number" placeholder="Ex. 120" min="20" max="240" [(ngModel)]="tempo">
+      <span matSuffix>BPM</span>
+    </mat-form-field>
+
+    <div style="margin-left: 3em">
+      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">
+        <mat-icon>undo</mat-icon>
+      </button>
+      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">
+        <mat-icon>redo</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <mat-divider style="width: 100%; margin: 1em 0"></mat-divider>
+
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+
+    <div>
+      <div class="label-container label-horizontal">
+        <label id="randomness-label" class="name-label">Randomness</label>
+        <label class="value-label">{{temperature}}</label>
+      </div>
+      <mat-slider class="mat-slider" style="width: 200px" matTooltip="Controls the randomness of the softmax output layer"
+                  [(value)]="temperature"
+                  [max]="2"
+                  [min]="0"
+                  [step]="0.1"
+                  [thumbLabel]="true"
+                  [tickInterval]="0.1">
+      </mat-slider>
+    </div>
+
+    <button style="margin-left: 3em; margin-right: 1em" mat-flat-button color="primary" (click)="sampleNewSequence()" (keydown.s)="sampleNewSequence()">Sample</button>
+    or
+<!--    <button mat-flat-button color="primary" (click)="openMidiFile()">Upload MIDI File</button>-->
+
+    <ngx-file-drop class="dropzone" style="width: 200px" dropZoneLabel="Drop files here" accept=".mid" (onFileDrop)="dropped($event)"
+                   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+      <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+        <div (click)="openFileSelector()" class="dropzone-text">
+          Drag your MIDI file here
+        </div>
+<!--        <button type="button" (click)="openFileSelector()">Browse Files</button>-->
+      </ng-template>
+    </ngx-file-drop>
+<!--    <div class="upload-table">-->
+<!--      <table class="table">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--          <th>Name</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody class="upload-name-style">-->
+<!--        <tr *ngFor="let item of files; let i=index">-->
+<!--          <td><strong>{{ item.relativePath }}</strong></td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--      </table>-->
+<!--    </div>-->
+
+
+<!--    Old-->
+<!--    <input type="file" class="file-upload" onchange="console.log(event.target.files)">-->
+
+<!--    <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>-->
+<!--    <div class="file-upload">-->
+<!--      <button mat-flat-button color="primary" class="upload-btn" (click)="fileUpload.click()">Upload MIDI File</button>-->
+<!--      {{fileName || "No file uploaded yet."}}-->
+<!--    </div>-->
+  </div>
+
+  <mat-divider style="width: 100%; margin: 1em 0"></mat-divider>
+
+  <div class="visualizer-container" style="margin-bottom: 1em">
+    <svg id="svg_visualizer"></svg>
+  </div>
+
+  <mat-card class="slider-card">
+    <mat-card-title>Style Control</mat-card-title>
+    <mat-card-content>
+
+      <div class="slider-label-container" *ngFor="let slider of sliders, let i = index">
+        <div class="label-container label-vertical">
+          <label id="beauty-label" class="name-label">{{slider.category | titlecase}}</label>
+          <label class="value-label">{{slider.value}}</label>
+        </div>
+        <mat-slider class="mat-slider"
+                    [disabled]="currentNoteSequence === null"
+                    [max]="10"
+                    [min]="0"
+                    [step]="1"
+                    [tickInterval]="1"
+                    [thumbLabel]="true"
+                    [(ngModel)]="slider.value"
+                    [vertical]="true"
+                    (change)="onSliderChange(slider.category)">
+        </mat-slider>
+      </div>
+      <button mat-mini-fab color="primary" matTooltip="Add/embed your own style"><mat-icon>add</mat-icon></button>
+
+    </mat-card-content>
+    <mat-card-footer>
+      <!--      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>-->
+    </mat-card-footer>
+  </mat-card>
+
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false" style="width: 100%; margin: 3em 0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Additional Control
+      </mat-panel-title>
+      <mat-panel-description>
+        Currently I am {{panelOpenState ? 'open' : 'closed'}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-form-field appearance="outline">
+        <mat-label>Attribute Mean</mat-label>
+        <mat-select [(value)]="selectedAttribute">
+          <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button style="margin-left: 3em" color="primary" (click)="showAttributeVector()">Show Attribute Vector as Sequence</button>
+    </div>
+
+  </mat-expansion-panel>
+
+</div>
+
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="default"
+  color="#fff"
+  type="ball-pulse"
+  [fullScreen] = "true">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>

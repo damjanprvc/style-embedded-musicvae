@@ -1,0 +1,83 @@
+.composer-container {
+  margin: 1em;
+}
+
+.mat-display-3 {
+  margin-bottom: 16px;
+}
+
+canvas {
+  margin: 2em 0;
+}
+
+.file-input {
+  display: none;
+}
+
+.visualizer-container {
+  background: #ffffff;
+  padding: 14px;
+  overflow-x: auto;
+  border: 3px solid #928787;
+  width: 100%;
+}
+
+.mat-card + .mat-card {
+  margin-top: 8px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+mat-card-title {
+  margin-bottom: 16px;
+}
+
+.slider-label-container {
+  padding: 0 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-card .label-container.label-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  /*max-width: fit-content;*/
+  height: 48px;
+}
+
+/*Randomness label */
+.label-container.label-horizontal {
+  display: flex;
+  justify-content: space-evenly;
+  max-width: 284px;
+}
+
+.value-label {
+  font-weight: 600;
+}
+
+/*Removes bottom margin of all form fields*/
+::ng-deep .mat-form-field-wrapper{
+  margin-bottom: -1.25em !important;
+}
+
+::ng-deep .ngx-file-drop__drop-zone {
+  /*padding: 2em;*/
+}
+
+.dropzone {
+  width: 200px;
+  margin-left: 1em
+}
+
+.dropzone .dropzone-text:hover {
+  cursor: pointer;
+}

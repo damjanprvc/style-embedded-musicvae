@@ -1,0 +1,48 @@
+<div class="midime-container" fxLayout="column" fxLayoutAlign="space-around start">
+<!--  <button mat-flat-button color="primary" (click)="loadFiles()">Upload MIDI File(s) to train MidiMe on</button>-->
+  <div class="player-container">
+    <button mat-flat-button color="primary" (click)="playSequence()">PLAY</button>
+    <button mat-flat-button color="primary" (click)="sample()">Sample</button>
+    <button mat-flat-button color="primary" (click)="showAttributeVector()">Show Attribute Vector as Sequence</button>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Attribute Mean</mat-label>
+      <mat-select [(value)]="selectedAttribute">
+        <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="visualizer-container">
+      <svg id="svg_visualizer"></svg>
+    </div>
+  </div>
+<!--  <button mat-flat-button color="primary" (click)="train()">Train</button>-->
+  <!--  <button mat-flat-button color="primary" (click)="loadMeans()">loadMeans</button>-->
+
+  <mat-card class="slider-card">
+    <mat-card-title>Attribute Vector Slider</mat-card-title>
+    <mat-card-content>
+
+      <div class="slider-label-container" *ngFor="let slider of sliders, let i = index">
+        <div class="label-container label-vertical">
+          <label id="beauty-label" class="name-label">{{slider.category}}</label>
+          <label class="value-label">{{slider.value}}</label>
+        </div>
+        <mat-slider class="mat-slider"
+                    [disabled]="currentNoteSequence === null"
+                    [max]="10"
+                    [min]="0"
+                    [step]="1"
+                    [thumbLabel]="true"
+                    [(ngModel)]="slider.value"
+                    [vertical]="true"
+                    (change)="onSliderChange(slider.category)">
+        </mat-slider>
+      </div>
+
+    </mat-card-content>
+    <mat-card-footer>
+<!--      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>-->
+    </mat-card-footer>
+  </mat-card>
+</div>

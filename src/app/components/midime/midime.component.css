@@ -1,0 +1,46 @@
+.midime-container {
+  margin: 1em 0;
+}
+
+.visualizer-container {
+  background: white;
+  padding: 14px;
+  overflow-x: auto;
+  border: 3px solid black;
+  width: 100%;
+}
+
+
+.mat-card + .mat-card {
+  margin-top: 8px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: row;
+}
+
+mat-card-title {
+  margin-bottom: 16px;
+}
+
+.slider-label-container {
+  padding: 0 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-card .label-container.label-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  /*max-width: fit-content;*/
+  height: 48px;
+}
+
+.value-label {
+  font-weight: 600;
+}
