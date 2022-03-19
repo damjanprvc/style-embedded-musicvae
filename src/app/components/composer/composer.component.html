@@ -59,7 +59,7 @@
 <!--    <button mat-flat-button color="primary" (click)="openMidiFile()">Upload MIDI File</button>-->
 
     <ngx-file-drop class="dropzone" style="width: 200px" dropZoneLabel="Drop files here" accept=".mid" (onFileDrop)="dropped($event)"
-                   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)" matTooltip="Upload your own MIDI file as a starting point.
+                   matTooltip="Upload your own MIDI file as a starting point.
                    Make sure that the MIDI file contains only a 'monophonic melody'.">
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
         <div (click)="openFileSelector()" class="dropzone-text">
@@ -98,6 +98,9 @@
 
   <div class="visualizer-container" style="margin-bottom: 1em">
     <svg id="svg_visualizer"></svg>
+    <button mat-mini-fab matTooltip="Download current sequence as MIDI" (click)="downloadCurrentSequence()" style="float: right;" color="primary" aria-label="Download current sequence as MIDI">
+      <mat-icon>download</mat-icon>
+    </button>
   </div>
 
   <mat-card class="slider-card">

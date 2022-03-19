@@ -6,7 +6,8 @@ import {
   PianoRollCanvasVisualizer,
   Player,
   urlToNoteSequence,
-  PianoRollSVGVisualizer, SoundFontPlayer
+  sequenceProtoToMidi,
+  PianoRollSVGVisualizer, SoundFontPlayer, midiToSequenceProto
 } from '@magenta/music/es6/core';
 import {INoteSequence} from '@magenta/music';
 import * as tf from '@tensorflow/tfjs';
@@ -20,6 +21,7 @@ import * as Nexus from '../../../assets/NexusUI.js';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { saveAs } from 'file-saver';
 
 interface ModelCheckpoint {
   name: string;
@@ -47,6 +49,7 @@ export class ComposerComponent implements OnInit {
   player: SoundFontPlayer = null;
   visualizer = null;
   canvasId = 'canvas';
+  private currentZValue;
   currentNoteSequence: INoteSequence[] = null;
   tempo = 120.0;
   temperature = 0.5;
@@ -82,7 +85,6 @@ export class ComposerComponent implements OnInit {
   SNACKBAR_DURATION = 3 * 1000;
   isLoading = false;
 
-  private currentZValue;
 
   svgId = 'svg_visualizer';
 
@@ -188,7 +190,7 @@ export class ComposerComponent implements OnInit {
         fileEntry.file((file: File) => {
 
           // Here you can access the real file
-          console.log(droppedFile.relativePath, file);
+          // console.log(droppedFile.relativePath, file);
 
           // Embed the MIDI file and show the sequence
           blobToNoteSequence(file)
@@ -221,14 +223,6 @@ export class ComposerComponent implements OnInit {
       }
     }
     this.spinner.hide();
-  }
-
-  public fileOver(event): void {
-    // console.log(event);
-  }
-
-  public fileLeave(event): void {
-    // console.log(event);
   }
 
   async loadMeanForCategory(category: string, midiFilesUrl: string[]): Promise<void> {
@@ -307,6 +301,13 @@ export class ComposerComponent implements OnInit {
         this.isPlaying = false;
       });
     }
+  }
+
+  downloadCurrentSequence(): void {
+    console.log(this.currentNoteSequence[0]);
+    saveAs(new File([sequenceProtoToMidi(this.currentNoteSequence[0])], 'sample.mid'));
+    const noteSequence = midiToSequenceProto(sequenceProtoToMidi(this.currentNoteSequence[0]));
+    console.log(sequences.quantizeNoteSequence(noteSequence, 4));
   }
 
   /**
