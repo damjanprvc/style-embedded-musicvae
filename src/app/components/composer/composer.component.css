@@ -75,7 +75,7 @@ mat-card-title {
 
 .dropzone {
   width: 200px;
-  margin-left: 1em
+  margin: 0 1em;
 }
 
 .dropzone .dropzone-text:hover {

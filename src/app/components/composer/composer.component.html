@@ -12,7 +12,7 @@
 
     <button style="margin: 0 3em" mat-fab color="primary" (click)="playSequence()" [disabled]="currentNoteSequence === null"><mat-icon>{{!isPlaying ? 'play_arrow' : 'stop'}}</mat-icon></button>
 
-    <mat-form-field appearance="outline" style="max-width: 100px">
+    <mat-form-field disabled appearance="outline" style="max-width: 100px">
       <mat-label>Tempo</mat-label>
       <input matInput type="number" placeholder="Ex. 120" min="20" max="240" [(ngModel)]="tempo">
       <span matSuffix>BPM</span>
@@ -51,12 +51,16 @@
       </mat-slider>
     </div>
 
-    <button style="margin-left: 3em; margin-right: 1em" mat-flat-button color="primary" (click)="sampleNewSequence()" (keydown.s)="sampleNewSequence()">Sample</button>
+    <div fxLayout="column" fxLayoutAlign="space-between center" style="margin-left: 3em; margin-right: 1em">
+      <button mat-flat-button style="margin-bottom: 1em; width: 120px" color="primary" (click)="sampleNewSequence()" (keydown.s)="sampleNewSequence()">Sample</button>
+      <button mat-stroked-button disabled style="width: 120px" color="primary" (click)="sampleNewSequence()">Resample</button>
+    </div>
     or
 <!--    <button mat-flat-button color="primary" (click)="openMidiFile()">Upload MIDI File</button>-->
 
     <ngx-file-drop class="dropzone" style="width: 200px" dropZoneLabel="Drop files here" accept=".mid" (onFileDrop)="dropped($event)"
-                   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+                   (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)" matTooltip="Upload your own MIDI file as a starting point.
+                   Make sure that the MIDI file contains only a 'monophonic melody'.">
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
         <div (click)="openFileSelector()" class="dropzone-text">
           Drag your MIDI file here
@@ -64,20 +68,20 @@
 <!--        <button type="button" (click)="openFileSelector()">Browse Files</button>-->
       </ng-template>
     </ngx-file-drop>
-<!--    <div class="upload-table">-->
-<!--      <table class="table">-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--          <th>Name</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody class="upload-name-style">-->
-<!--        <tr *ngFor="let item of files; let i=index">-->
-<!--          <td><strong>{{ item.relativePath }}</strong></td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--      </table>-->
-<!--    </div>-->
+    <div class="upload-table" *ngIf="files.length != 0">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Uploaded File:</th>
+        </tr>
+        </thead>
+        <tbody class="upload-name-style">
+        <tr *ngFor="let item of files; let i=index">
+          <td><strong>{{ item.relativePath }}</strong></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
 
 <!--    Old-->

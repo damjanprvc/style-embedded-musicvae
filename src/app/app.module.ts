@@ -24,6 +24,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {NgxFileDropModule} from 'ngx-file-drop';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     NgxFileDropModule,
     MatExpansionModule,
     NgxSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent],
