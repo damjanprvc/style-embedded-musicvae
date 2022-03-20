@@ -25,13 +25,18 @@ import {NgxFileDropModule} from 'ngx-file-drop';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { DialogEmbedOwnStyleComponent } from './dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogInfoComponent } from './dialogs/dialog-info/dialog-info.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ComposerComponent,
     MidimeComponent,
-    HeaderComponent
+    HeaderComponent,
+    DialogEmbedOwnStyleComponent,
+    DialogInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +59,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatExpansionModule,
     NgxSpinnerModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent],

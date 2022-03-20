@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Embed Your Own Style</h2>
+<mat-dialog-content>
+  <h3>Upload some melodies that define your style.</h3>
+  <p>The melodies will be cut in 2-, 4- or 16-bar chunks (depending on the selected checkpoint) and embedded in the latent space.
+    Out of this embedding vectors a style vector will be calculated (mean). This style vector (hopefully) represents your style.
+    The melody can then be steered with the style control slider.
+    </p>
+
+  <ngx-file-drop class="dropzone" dropZoneLabel="Drop files here" accept=".mid" (onFileDrop)="dropped($event)"
+                 matTooltip="Upload your own MIDI files to embed your own style in the model. This style can than be used to steer the generation of new melodies.
+                   Make sure that the MIDI file(s) contain only a 'monophonic melody'.">
+    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+      <div (click)="openFileSelector()" class="dropzone-text">
+        Drag your MIDI files here
+      </div>
+    </ng-template>
+  </ngx-file-drop>
+
+  <div class="upload-table" fxLayout="row" fxLayoutAlign="center center" style="margin-top: 1em" *ngIf="filesToEmbed.length != 0">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Uploaded File(s):</th>
+      </tr>
+      </thead>
+      <tbody class="upload-name-style">
+      <tr *ngFor="let item of filesToEmbed; let i=index">
+        <td><strong>{{ item.relativePath }}</strong></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [disabled]="filesToEmbedAsFile.length == 0" [mat-dialog-close]="filesToEmbedAsFile" cdkFocusInitial>Embed</button>
+</mat-dialog-actions>

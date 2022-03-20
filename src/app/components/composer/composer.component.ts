@@ -22,6 +22,8 @@ import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 
 import { NgxSpinnerService } from 'ngx-spinner';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { saveAs } from 'file-saver';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogEmbedOwnStyleComponent} from '../../dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
 
 interface ModelCheckpoint {
   name: string;
@@ -105,7 +107,7 @@ export class ComposerComponent implements OnInit {
   });
 
   constructor(private attributeVectorService: AttributeVectorService, private spinner: NgxSpinnerService,
-              private snackBar: MatSnackBar) { }
+              private snackBar: MatSnackBar, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.spinner.show();
@@ -157,6 +159,23 @@ export class ComposerComponent implements OnInit {
     this.init().then(() => {
       this.spinner.hide();
       console.log('All set up.');
+    });
+  }
+
+  /**
+   * Opens the Embed your Own Style Dialog
+   */
+  openEmbedOwnStyleDialog(): void {
+    const dialogRef = this.dialog.open(DialogEmbedOwnStyleComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      // 'Embed' button in the Dialog was clicked
+      if (result) {
+        // console.log(result);
+        this.spinner.show();
+        this.loadMeanForCategory('custom', result).then(() => console.log('Successfully embedded own style.'));
+        this.spinner.hide();
+      }
     });
   }
 
@@ -225,11 +244,19 @@ export class ComposerComponent implements OnInit {
     this.spinner.hide();
   }
 
-  async loadMeanForCategory(category: string, midiFilesUrl: string[]): Promise<void> {
+  async loadMeanForCategory(category: string, midiFilesUrl: string[] | File[]): Promise<void> {
     const melodies: NoteSequence[] = [];
-    for (const midi of midiFilesUrl) {
-      const sequence = await urlToNoteSequence(midi);
-      melodies.push(sequence);
+    // Check to use either 'urlToNoteSequence' or 'blobToNoteSequence'
+    if (Array.isArray(midiFilesUrl) && midiFilesUrl[0] instanceof File) {
+      for (const midi of midiFilesUrl) {
+        const sequence = await blobToNoteSequence(midi as File);
+        melodies.push(sequence);
+      }
+    } else {
+      for (const midi of midiFilesUrl) {
+        const sequence = await urlToNoteSequence(midi as string);
+        melodies.push(sequence);
+      }
     }
 
     // 1. Encode the input into MusicVAE, get back a z.

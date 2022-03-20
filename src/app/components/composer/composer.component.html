@@ -98,7 +98,7 @@
 
   <div class="visualizer-container" style="margin-bottom: 1em">
     <svg id="svg_visualizer"></svg>
-    <button mat-mini-fab matTooltip="Download current sequence as MIDI" (click)="downloadCurrentSequence()" style="float: right;" color="primary" aria-label="Download current sequence as MIDI">
+    <button mat-mini-fab [disabled]="!currentNoteSequence" matTooltip="Download current sequence as MIDI" (click)="downloadCurrentSequence()" style="float: right;" color="primary" aria-label="Download current sequence as MIDI">
       <mat-icon>download</mat-icon>
     </button>
   </div>
@@ -107,6 +107,9 @@
     <mat-card-title>Style Control</mat-card-title>
     <mat-card-content>
 
+      <div style="height: 150px; margin-right: 1em" fxLayout="column" fxLayoutAlign="center center" *ngIf="sliders.length == 0">
+        <div class="arrow-1"></div>
+      </div>
       <div class="slider-label-container" *ngFor="let slider of sliders, let i = index">
         <div class="label-container label-vertical">
           <label id="beauty-label" class="name-label">{{slider.category | titlecase}}</label>
@@ -124,7 +127,7 @@
                     (change)="onSliderChange(slider.category)">
         </mat-slider>
       </div>
-      <button mat-mini-fab color="primary" matTooltip="Add/embed your own style"><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab color="primary" (click)="openEmbedOwnStyleDialog()" matTooltip="Add/embed your own style"><mat-icon>add</mat-icon></button>
 
     </mat-card-content>
     <mat-card-footer>
