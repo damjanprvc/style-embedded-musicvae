@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {DialogInfoComponent} from '../../dialogs/dialog-info/dialog-info.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
 
+  onInfoClick(): void {
+    const dialogRef = this.dialog.open(DialogInfoComponent);
+  }
 }
