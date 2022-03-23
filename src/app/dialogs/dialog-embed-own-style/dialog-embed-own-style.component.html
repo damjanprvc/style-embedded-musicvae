@@ -2,8 +2,8 @@
 <mat-dialog-content>
   <h3>Upload some melodies that define your style.</h3>
   <p>The melodies will be cut in 2-, 4- or 16-bar chunks (depending on the selected checkpoint) and embedded in the latent space.
-    Out of this embedding vectors a style vector will be calculated (mean). This style vector (hopefully) represents your style.
-    The melody can then be steered with the style control slider.
+    Out of this embedding vectors a style vector will be calculated (mean). This style vector represents (hopefully) your style.
+    The melody creation process can then be steered with the style control slider.
     </p>
 
   <ngx-file-drop class="dropzone" dropZoneLabel="Drop files here" accept=".mid" (onFileDrop)="dropped($event)"
