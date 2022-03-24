@@ -24,6 +24,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { saveAs } from 'file-saver';
 import {MatDialog} from '@angular/material/dialog';
 import {DialogEmbedOwnStyleComponent} from '../../dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
+import soundfontJson from '../../../assets/soundfont.json';
 
 interface ModelCheckpoint {
   name: string;
@@ -48,10 +49,10 @@ export class ComposerComponent implements OnInit {
   // modelCheckpoint = '../../../assets/checkpoints/mel_2bar_small_checkpoint';
   // modelCheckpoint = '../../../assets/checkpoints/hierdec-mel_16bar_checkpoint';
   // modelCheckpoint = '../../../assets/checkpoints/cat-mel_2bar_big_checkpoint';
-  player: SoundFontPlayer = null;
+  player: SoundFontPlayer = new SoundFontPlayer(this.SOUNDFONT_URL);
   visualizer = null;
   canvasId = 'canvas';
-  private currentZValue;
+  currentZValue;
   currentNoteSequence: INoteSequence[] = null;
   tempo = 120.0;
   temperature = 0.5;
@@ -73,6 +74,10 @@ export class ComposerComponent implements OnInit {
   model = new MusicVAE(this.selectedCheckpoint.url);
   MEL_BARS = this.selectedCheckpoint.sequenceLength;
 
+  // Soundfont SGM Samples
+  instruments = Object.values(soundfontJson.instruments).slice(0, -1);
+  selectedInstrument = 0;
+
   isPlaying = false;
 
   fileName: string;
@@ -86,8 +91,7 @@ export class ComposerComponent implements OnInit {
 
   SNACKBAR_DURATION = 3 * 1000;
   isLoading = false;
-
-
+  
   svgId = 'svg_visualizer';
 
   // public sliders: Array<{category: string, value: number, mean: tf.Tensor}> = [{category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}];
@@ -335,19 +339,6 @@ export class ComposerComponent implements OnInit {
     this.spinner.hide();
   }
 
-  playSequence(): void {
-    if (this.player.isPlaying()) {
-      this.isPlaying = false;
-      this.player.stop();
-    } else {
-      this.isPlaying = true;
-      this.player.start(this.visualizer.noteSequence).then(() => {
-        console.log('Played');
-        this.isPlaying = false;
-      });
-    }
-  }
-
   downloadCurrentSequence(): void {
     // TODO: Not working. No Notes were found in the 'sequenceProtoToMidi' result
     console.log(this.currentNoteSequence[0]);
@@ -465,7 +456,15 @@ export class ComposerComponent implements OnInit {
 
   private showSequenceToUI(sequence: INoteSequence[]): void {
     this.visualizer = new PianoRollSVGVisualizer(sequence[0], document.getElementById(this.svgId) as unknown as SVGSVGElement);
+  }
 
+  playSequence(sequence: INoteSequence[]): void {
+    if (this.player.isPlaying()) {
+      this.isPlaying = false;
+      this.player.stop();
+      return;
+    }
+    this.isPlaying = true;
     const callbackObject = {
       run: (note: NoteSequence.Note) => {
         this.visualizer.redraw(note);
@@ -475,7 +474,15 @@ export class ComposerComponent implements OnInit {
 
     this.player = new SoundFontPlayer(
       this.SOUNDFONT_URL, undefined, undefined, undefined, callbackObject);
-    this.player.loadSamples(sequence[0]).then(() => console.log('Samples loaded.'));
+
+    // "Loads" i.e. sets for each note the current selected instrument
+    sequence[0].notes.forEach(n => n.program = this.selectedInstrument);
+
+    this.player.start(sequence[0]).then(() => {
+      console.log('Played');
+      this.isPlaying = false;
+    });
+
   }
 
   private resetAllSlider(): void {

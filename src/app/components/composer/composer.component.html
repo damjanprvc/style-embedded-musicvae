@@ -10,7 +10,14 @@
       </mat-select>
     </mat-form-field>
 
-    <button style="margin: 0 3em" mat-fab color="primary" (click)="playSequence()" [disabled]="currentNoteSequence === null"><mat-icon>{{!isPlaying ? 'play_arrow' : 'stop'}}</mat-icon></button>
+    <mat-form-field appearance="outline" style="margin-left: 3em">
+      <mat-label>Instrument</mat-label>
+      <mat-select [(value)]="selectedInstrument">
+        <mat-option *ngFor="let instrument of instruments, let i = index" [value]="i">{{instrument.replaceAll('_', ' ') | titlecase}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button style="margin: 0 3em" mat-fab color="primary" (click)="playSequence(currentNoteSequence)" [disabled]="currentNoteSequence === null"><mat-icon>{{!isPlaying ? 'play_arrow' : 'stop'}}</mat-icon></button>
 
     <mat-form-field disabled appearance="outline" style="max-width: 100px">
       <mat-label>Tempo</mat-label>
@@ -52,7 +59,7 @@
     </div>
 
     <div fxLayout="column" fxLayoutAlign="space-between center" style="margin-left: 3em; margin-right: 1em">
-      <button mat-flat-button matTooltip="Sample a new sequence from the model" style="margin-bottom: 1em; width: 130px" color="primary" (click)="sampleNewSequence()">Sample</button>
+      <button mat-flat-button matTooltip="Sample a new sequence from the model" style="margin-bottom: 1em; width: 130px" color="primary" (click)="sampleNewSequence()" (keyup.s)="sampleNewSequence()">Sample</button>
       <button mat-stroked-button matTooltip="Resample current sequence. Will produce slight variations." [disabled]="currentZValue == null" style="margin-bottom: 0.5em; width: 130px" color="primary" (click)="resampleSequence()">Resample</button>
       <button mat-stroked-button matTooltip="Sample similar sequence. Will produce more variations than 'Resample'." [disabled]="currentNoteSequence == null" style="width: 130px" color="primary" (click)="sampleSimilarSequence()">Sample Similar</button>
     </div>
