@@ -306,7 +306,6 @@ export class ComposerComponent implements OnInit {
     this.currentNoteSequence = sequence;
     this.showSequenceToUI(sequence);
     this.resetAllSlider();
-
     this.spinner.hide();
 
     // Sample with a 3DTensor as output (One-Hot output)
@@ -315,6 +314,25 @@ export class ComposerComponent implements OnInit {
     //   .then((sample) => {
     //     console.log(sample.toString(true));
     //   });
+  }
+
+  async resampleSequence(): Promise<void> {
+    this.spinner.show();
+    const sequence = await this.model.decode(this.currentZValue, this.temperature);
+    this.currentNoteSequence = sequence;
+    this.showSequenceToUI(sequence);
+    this.resetAllSlider();
+    this.spinner.hide();
+
+  }
+
+  async sampleSimilarSequence(): Promise<void> {
+    this.spinner.show();
+    const sequence = await this.model.similar(this.currentNoteSequence[0], 1, 0.7, this.temperature);
+    this.currentNoteSequence = sequence;
+    this.showSequenceToUI(sequence);
+    this.resetAllSlider();
+    this.spinner.hide();
   }
 
   playSequence(): void {
@@ -331,6 +349,7 @@ export class ComposerComponent implements OnInit {
   }
 
   downloadCurrentSequence(): void {
+    // TODO: Not working. No Notes were found in the 'sequenceProtoToMidi' result
     console.log(this.currentNoteSequence[0]);
     saveAs(new File([sequenceProtoToMidi(this.currentNoteSequence[0])], 'sample.mid'));
     const noteSequence = midiToSequenceProto(sequenceProtoToMidi(this.currentNoteSequence[0]));

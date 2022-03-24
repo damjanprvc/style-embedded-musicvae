@@ -52,8 +52,9 @@
     </div>
 
     <div fxLayout="column" fxLayoutAlign="space-between center" style="margin-left: 3em; margin-right: 1em">
-      <button mat-flat-button style="margin-bottom: 1em; width: 120px" color="primary" (click)="sampleNewSequence()" (keydown.s)="sampleNewSequence()">Sample</button>
-      <button mat-stroked-button disabled style="width: 120px" color="primary" (click)="sampleNewSequence()">Resample</button>
+      <button mat-flat-button matTooltip="Sample a new sequence from the model" style="margin-bottom: 1em; width: 130px" color="primary" (click)="sampleNewSequence()">Sample</button>
+      <button mat-stroked-button matTooltip="Resample current sequence. Will produce slight variations." [disabled]="currentZValue == null" style="margin-bottom: 0.5em; width: 130px" color="primary" (click)="resampleSequence()">Resample</button>
+      <button mat-stroked-button matTooltip="Sample similar sequence. Will produce more variations than 'Resample'." [disabled]="currentNoteSequence == null" style="width: 130px" color="primary" (click)="sampleSimilarSequence()">Sample Similar</button>
     </div>
     or
 <!--    <button mat-flat-button color="primary" (click)="openMidiFile()">Upload MIDI File</button>-->
