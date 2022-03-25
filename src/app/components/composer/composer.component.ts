@@ -91,7 +91,7 @@ export class ComposerComponent implements OnInit {
 
   SNACKBAR_DURATION = 3 * 1000;
   isLoading = false;
-  
+
   svgId = 'svg_visualizer';
 
   // public sliders: Array<{category: string, value: number, mean: tf.Tensor}> = [{category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}];
@@ -340,11 +340,9 @@ export class ComposerComponent implements OnInit {
   }
 
   downloadCurrentSequence(): void {
-    // TODO: Not working. No Notes were found in the 'sequenceProtoToMidi' result
-    console.log(this.currentNoteSequence[0]);
+    // There is a bug in Magenta - No velocities are set: so need to set it manually to be able to hear the notes in the saved file
+    this.currentNoteSequence[0].notes.forEach(n => n.velocity = 80);
     saveAs(new File([sequenceProtoToMidi(this.currentNoteSequence[0])], 'sample.mid'));
-    const noteSequence = midiToSequenceProto(sequenceProtoToMidi(this.currentNoteSequence[0]));
-    console.log(sequences.quantizeNoteSequence(noteSequence, 4));
   }
 
   /**
