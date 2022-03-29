@@ -28,6 +28,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { DialogEmbedOwnStyleComponent } from './dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogInfoComponent } from './dialogs/dialog-info/dialog-info.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { DialogInfoComponent } from './dialogs/dialog-info/dialog-info.component
     NgxSpinnerModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -5,8 +5,8 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Checkpoint</mat-label>
-      <mat-select [(value)]="selectedCheckpoint.url" (selectionChange)="reloadModel()">
-        <mat-option *ngFor="let checkpoint of modelCheckpoints" [value]="checkpoint.url">{{checkpoint.name}}</mat-option>
+      <mat-select [(ngModel)]="selectedCheckpoint" (selectionChange)="reloadModel()">
+        <mat-option *ngFor="let checkpoint of modelCheckpoints" [value]="checkpoint">{{checkpoint.name}}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -26,15 +26,16 @@
     </mat-form-field>
 
     <div style="margin-left: 3em">
-      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">
-        <mat-icon>undo</mat-icon>
-      </button>
-      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">
-        <mat-icon>redo</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-        <mat-icon>settings</mat-icon>
-      </button>
+      <mat-slide-toggle color="primary" [(ngModel)]="showAdditionalControl">Show additional control</mat-slide-toggle>
+<!--      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">-->
+<!--        <mat-icon>undo</mat-icon>-->
+<!--      </button>-->
+<!--      <button mat-icon-button disabled aria-label="Example icon button with a vertical three dot icon">-->
+<!--        <mat-icon>redo</mat-icon>-->
+<!--      </button>-->
+<!--      <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">-->
+<!--        <mat-icon>settings</mat-icon>-->
+<!--      </button>-->
     </div>
 
   </div>
@@ -143,14 +144,14 @@
     </mat-card-footer>
   </mat-card>
 
-  <mat-expansion-panel (opened)="panelOpenState = true"
+  <mat-expansion-panel *ngIf="showAdditionalControl" (opened)="panelOpenState = true"
                        (closed)="panelOpenState = false" style="width: 100%; margin: 3em 0">
     <mat-expansion-panel-header>
       <mat-panel-title>
         Additional Control
       </mat-panel-title>
       <mat-panel-description>
-        Currently I am {{panelOpenState ? 'open' : 'closed'}}
+        Additional control. Mainly for debugging purposes.
       </mat-panel-description>
     </mat-expansion-panel-header>
 

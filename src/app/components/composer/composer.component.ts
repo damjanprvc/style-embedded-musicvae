@@ -25,8 +25,10 @@ import { saveAs } from 'file-saver';
 import {MatDialog} from '@angular/material/dialog';
 import {DialogEmbedOwnStyleComponent} from '../../dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
 import soundfontJson from '../../../assets/soundfont.json';
+import styleMeansJson from '../../../assets/style-means.json';
 
 interface ModelCheckpoint {
+  id: string;
   name: string;
   url: string;
   sequenceLength: number;
@@ -40,15 +42,6 @@ interface ModelCheckpoint {
 export class ComposerComponent implements OnInit {
 
   SOUNDFONT_URL = 'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus';
-  // go to https://goo.gl/magenta/musicvae-checkpoints to see more checkpoint urls
-  // modelCheckpoint = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small';
-  // modelCheckpoint = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_q2';
-  // Trained with a strong prior (low KL divergence), which is better for sampling.
-  // modelCheckpoint = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2';
-  // modelCheckpoint = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_16bar_small_q2';
-  // modelCheckpoint = '../../../assets/checkpoints/mel_2bar_small_checkpoint';
-  // modelCheckpoint = '../../../assets/checkpoints/hierdec-mel_16bar_checkpoint';
-  // modelCheckpoint = '../../../assets/checkpoints/cat-mel_2bar_big_checkpoint';
   player: SoundFontPlayer = new SoundFontPlayer(this.SOUNDFONT_URL);
   visualizer = null;
   canvasId = 'canvas';
@@ -56,19 +49,22 @@ export class ComposerComponent implements OnInit {
   currentNoteSequence: INoteSequence[] = null;
   tempo = 120.0;
   temperature = 0.5;
+  // go to https://goo.gl/magenta/musicvae-checkpoints to see more checkpoint urls
   // Local checkpoints - use this if you stored the Magenta checkpoints on your local machine
   modelCheckpoints: ModelCheckpoint[] = [
-    {name: '2-Bar Small', url: '../../../assets/checkpoints/mel_2bar_small_checkpoint', sequenceLength: 2},
-    {name: '4-Bar Medium', url: '../../../assets/checkpoints/mel_4bar_med_q2_checkpoint', sequenceLength: 4},
-    {name: '4-Bar Low KL Medium', url: '../../../assets/checkpoints/mel_4bar_med_lokl_q2_checkpoint', sequenceLength: 4},
-    {name: '16-Bar Small', url: '../../../assets/checkpoints/mel_16bar_small_q2_checkpoint', sequenceLength: 16}
+    {id: 'mel_2bar_small', name: '2-Bar Small', url: '../../../assets/checkpoints/mel_2bar_small_checkpoint', sequenceLength: 2},
+    {id: 'mel_4bar_med_q2', name: '4-Bar Medium', url: '../../../assets/checkpoints/mel_4bar_med_q2_checkpoint', sequenceLength: 4},
+    // Trained with a strong prior (low KL divergence), which is better for sampling.
+    // tslint:disable-next-line:max-line-length
+    {id: 'mel_4bar_med_lokl_q2', name: '4-Bar Low KL Medium', url: '../../../assets/checkpoints/mel_4bar_med_lokl_q2_checkpoint', sequenceLength: 4},
+    {id: 'mel_16bar_small_q2', name: '16-Bar Small', url: '../../../assets/checkpoints/mel_16bar_small_q2_checkpoint', sequenceLength: 16}
   ];
   // Hosted checkpoints
   // modelCheckpoints: ModelCheckpoint[] = [
-  //   {name: '2-Bar Small', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small', sequenceLength: 2},
-  //   {name: '4-Bar Medium', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_q2', sequenceLength: 4},
-  //   {name: '4-Bar Low KL Medium', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2', sequenceLength: 4},
-  //   {name: '16-Bar Small', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_16bar_small_q2', sequenceLength: 16}
+  //   {id: 'mel_2bar_small', name: '2-Bar Small', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small', sequenceLength: 2},
+  //   {id: 'mel_4bar_med_q2', name: '4-Bar Medium', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_q2', sequenceLength: 4},
+  //   {id: 'mel_4bar_med_lokl_q2', name: '4-Bar Low KL Medium', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_med_lokl_q2', sequenceLength: 4},
+  //   {id: 'mel_16bar_small_q2', name: '16-Bar Small', url: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_16bar_small_q2', sequenceLength: 16}
   // ];
   selectedCheckpoint = this.modelCheckpoints[0];
   model = new MusicVAE(this.selectedCheckpoint.url);
@@ -81,6 +77,8 @@ export class ComposerComponent implements OnInit {
   isPlaying = false;
 
   fileName: string;
+
+  showAdditionalControl = true;
 
   // Drag to upload
   public files: NgxFileDropEntry[] = [];
@@ -123,8 +121,10 @@ export class ComposerComponent implements OnInit {
 
   async init(): Promise<void> {
     await this.model.initialize();
+    console.log(this.selectedCheckpoint);
+    console.log(this.MEL_BARS);
 
-    // First MIDI Set
+    // First MIDI Set (Trial Version)
     // await this.loadMeanForCategory('beauty', this.midiFilesBeauty);
     // await this.loadMeanForCategory('dark', this.midiFilesDark);
     // await this.loadMeanForCategory('hiphop', this.midiFilesHiphop);
@@ -146,6 +146,16 @@ export class ComposerComponent implements OnInit {
     // await this.loadMeanForCategory('emotional', midiFilesEmotional16Bar);
     // await this.loadMeanForCategory('pop', midiFilesPop16Bar);
 
+    // Load style means from file
+    await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
+    await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
+    await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
+    await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
+    await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
+    if (this.selectedCheckpoint.id !== 'mel_16bar_small_q2') {
+      await this.loadMeanForCategoryFromFile('rnb', this.selectedCheckpoint.id);
+    }
+
     // this.selectedAttribute = this.sliders[0].category;
   }
 
@@ -157,9 +167,11 @@ export class ComposerComponent implements OnInit {
 
     this.sliders = [];
     this.previousSlidersState = [];
+    this.resetAllSlider();
 
     // this.model.dispose(); // evtl. ohne dispose
     this.model = new MusicVAE(this.selectedCheckpoint.url);
+    this.MEL_BARS = this.selectedCheckpoint.sequenceLength;
     this.init().then(() => {
       this.spinner.hide();
       console.log('All set up.');
@@ -248,6 +260,15 @@ export class ComposerComponent implements OnInit {
     this.spinner.hide();
   }
 
+  async loadMeanForCategoryFromFile(category: string, checkpointId: string): Promise<void> {
+    const selectedObj = styleMeansJson.find(x => x.checkpointId === checkpointId && x.name === category);
+    // console.log(selectedObj);
+    const mean = tf.tensor(selectedObj.meanTensor, [1, 256]);
+    // console.log(mean.print(true));
+    this.sliders.push({category, value: 0, mean});
+    this.previousSlidersState.push({category, value: 0});
+  }
+
   async loadMeanForCategory(category: string, midiFilesUrl: string[] | File[]): Promise<void> {
     const melodies: NoteSequence[] = [];
     // Check to use either 'urlToNoteSequence' or 'blobToNoteSequence'
@@ -287,6 +308,8 @@ export class ComposerComponent implements OnInit {
 
     z.print(true);
     attributeVectorZMean.print(true);
+    console.log(category + '-mean :');
+    console.log(JSON.stringify(attributeVectorZMean.arraySync()));
 
     // Prints Variances
     // console.log(category + ' Variance:');
@@ -476,7 +499,7 @@ export class ComposerComponent implements OnInit {
     // "Loads" i.e. sets for each note the current selected instrument
     sequence[0].notes.forEach(n => n.program = this.selectedInstrument);
 
-    this.player.start(sequence[0]).then(() => {
+    this.player.start(sequence[0], this.tempo).then(() => {
       console.log('Played');
       this.isPlaying = false;
     });
@@ -602,5 +625,4 @@ export class ComposerComponent implements OnInit {
   //     document.getElementById(this.canvasId) as HTMLCanvasElement);
   //   this.currentNoteSequence = sequence;
   // }
-
 }
