@@ -213,14 +213,16 @@ export class ComposerComponent implements OnInit {
    * Opens the Embed your Own Style Dialog
    */
   openEmbedOwnStyleDialog(): void {
-    const dialogRef = this.dialog.open(DialogEmbedOwnStyleComponent);
+    const dialogRef = this.dialog.open(DialogEmbedOwnStyleComponent, {
+      maxWidth: '60vw'
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       // 'Embed' button in the Dialog was clicked
       if (result) {
         // console.log(result);
         this.spinner.show();
-        this.loadMeanForCategory('custom', result).then(() => console.log('Successfully embedded own style.'));
+        this.loadMeanForCategory(result.styleName === '' ? 'custom' : result.styleName, result.files).then(() => console.log('Successfully embedded own style.'));
         this.spinner.hide();
       }
     });

@@ -121,7 +121,7 @@
       </div>
       <div class="slider-label-container" *ngFor="let slider of sliders, let i = index">
         <div class="label-container label-vertical">
-          <label id="beauty-label" class="name-label">{{slider.category | titlecase}}</label>
+          <label id="beauty-label" class="name-label">{{slider.category | uppercase}}</label>
           <label class="value-label">{{slider.value}}</label>
         </div>
         <mat-slider class="mat-slider"
@@ -151,19 +151,19 @@
         Additional Control
       </mat-panel-title>
       <mat-panel-description>
-        Additional control. Mainly for debugging purposes.
+        Output how the AI defines each style as a melody sequence. Mainly for debugging purposes.
       </mat-panel-description>
     </mat-expansion-panel-header>
 
     <div fxLayout="row" fxLayoutAlign="center center">
       <mat-form-field appearance="outline">
-        <mat-label>Attribute Mean</mat-label>
+        <mat-label>Style Mean</mat-label>
         <mat-select [(value)]="selectedAttribute">
-          <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category | titlecase}}</mat-option>
+          <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category | uppercase}}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <button mat-flat-button style="margin-left: 3em" color="primary" (click)="showAttributeVector()">Show Attribute Vector as Sequence</button>
+      <button mat-flat-button style="margin-left: 3em" color="primary" (click)="showAttributeVector()">Show Style Vector as Sequence</button>
     </div>
 
   </mat-expansion-panel>

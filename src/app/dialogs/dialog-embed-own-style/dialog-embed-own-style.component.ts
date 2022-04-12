@@ -10,6 +10,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class DialogEmbedOwnStyleComponent implements OnInit {
   public filesToEmbed: NgxFileDropEntry[] = [];
   public filesToEmbedAsFile: File[] = [];
+  public styleName = '';
   SNACKBAR_DURATION = 3 * 1000;
 
   constructor(private snackBar: MatSnackBar) {

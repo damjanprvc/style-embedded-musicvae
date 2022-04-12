@@ -1,5 +1,18 @@
 <h2 mat-dialog-title>StyleVAE - An AI powered composing tool</h2>
 <mat-dialog-content>
+  <h3>How to use?</h3>
+  <p>1. Start with an initial melody by either a) <strong>sampling</strong> a random sequence from the model or by b) <strong>uploading</strong> your own melody to use it as a staring point.<br>
+    2. Now the melody can be modified or steered by tweaking the <strong>'Style Control Slider'</strong>. Each slider (hopefully) adds more of its style characteristics to the current melody.<br>
+    3. You can upload your personal melodies to create personal style slider. Click the <strong>'+ Button'</strong> and upload your own <strong>monophonic melodies</strong> to let the AI extract your style.<br>
+    4. Play the melody sequence with the <strong>'Play Button'</strong>.<br>
+    <br>
+    The <strong>'Randomness Slider'</strong> controls the amount of randomness i.e. how random the notes will be chosen by the AI.<br>
+    <strong>'Resample'</strong> and <strong>'Sample Similar'</strong> buttons create slight variations of the current melody.<br>
+    You can change the AI model <strong>checkpoint</strong> (which mainly sets the length of the melody sequence) and choose between many different <strong>instrument samples</strong> for the playback.<br>
+    <br>
+    With the <strong>additional control</strong> you can output how the AI defines each style as a melody sequence.
+  </p>
+  <mat-divider style="width: 100%; margin: 1em 0"></mat-divider>
   <h3>This project was made as part of a bachelor's thesis at the TU Wien.</h3>
   Made with ❤️ and with <a href="https://github.com/magenta/magenta-js/tree/master/music" target="_blank">Magenta.js</a> by Damjan Prvulovic.
 </mat-dialog-content>
