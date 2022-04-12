@@ -26,6 +26,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {DialogEmbedOwnStyleComponent} from '../../dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
 import soundfontJson from '../../../assets/soundfont.json';
 import styleMeansJson from '../../../assets/style-means.json';
+import mahalanobis from 'mahalanobis';
 
 interface ModelCheckpoint {
   id: string;
@@ -147,16 +148,46 @@ export class ComposerComponent implements OnInit {
     // await this.loadMeanForCategory('pop', midiFilesPop16Bar);
 
     // Load style means from file
-    await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
-    await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
-    await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
-    await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
-    await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
-    if (this.selectedCheckpoint.id !== 'mel_16bar_small_q2') {
+    if (this.selectedCheckpoint.id === 'mel_2bar_small') {
+      await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('rnb', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('pop/emotinal', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('catchy/edm', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark/catchy', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark2', this.selectedCheckpoint.id);
+    }
+    if (this.selectedCheckpoint.id === 'mel_4bar_med_q2') {
+      await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('rnb', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional2', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark2', this.selectedCheckpoint.id);
+    }
+    if (this.selectedCheckpoint.id === 'mel_4bar_med_lokl_q2') {
+      await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
       await this.loadMeanForCategoryFromFile('rnb', this.selectedCheckpoint.id);
     }
+    if (this.selectedCheckpoint.id === 'mel_16bar_small_q2') {
+      await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('dark', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('edm', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('pop', this.selectedCheckpoint.id);
+      await this.loadMeanForCategoryFromFile('emotional2', this.selectedCheckpoint.id);
+    }
 
-    // this.selectedAttribute = this.sliders[0].category;
+    this.selectedAttribute = this.sliders[0].category;
   }
 
   /**
@@ -308,8 +339,8 @@ export class ComposerComponent implements OnInit {
 
     z.print(true);
     attributeVectorZMean.print(true);
-    console.log(category + '-mean :');
-    console.log(JSON.stringify(attributeVectorZMean.arraySync()));
+    // console.log(category + '-mean :');
+    // console.log(JSON.stringify(attributeVectorZMean.arraySync()));
 
     // Prints Variances
     // console.log(category + ' Variance:');
@@ -395,6 +426,8 @@ export class ComposerComponent implements OnInit {
   }
 
   async showAttributeVector(category: string = this.selectedAttribute): Promise<void> {
+    this.spinner.show();
+    this.resetAllSlider();
     const sliderIndex = this.sliders.findIndex(obj => {
       return obj.category === category;
     });
@@ -402,6 +435,7 @@ export class ComposerComponent implements OnInit {
     this.currentZValue = this.sliders[sliderIndex].mean;
     this.currentNoteSequence = attributeVectorsZMeanSequence;
     this.showSequenceToUI(attributeVectorsZMeanSequence);
+    this.spinner.hide();
   }
 
   // Show all Interpolations from 'sample' to 'category mean'

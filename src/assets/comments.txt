@@ -1,0 +1,9 @@
+mel_2bar_small - pop/emotinal = Pop_Melody_7-5
+mel_2bar_small - catchy/edm = EDM_Melody_5-1
+mel_2bar_small - dark/catchy = Dark_Melody_9-1
+mel_2bar_small - dark2 = Dark_Melody_16-1
+
+mel_4bar_med_q2 - emotional2 = Emotional_Melody_5-1
+mel_4bar_med_q2 - dark2 = Dark_Melody_16-1
+
+mel_16bar_small_q2 - emotional2 = Emotional_Melody_13-1

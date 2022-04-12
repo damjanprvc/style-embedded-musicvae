@@ -24,6 +24,7 @@
     "@angular/router": "~10.2.0",
     "@magenta/music": "^1.23.1",
     "file-saver": "^1.3.8",
+    "mahalanobis": "^1.0.0",
     "ngx-file-drop": "^13.0.0",
     "ngx-spinner": "^10.0.1",
     "rxjs": "~6.6.0",

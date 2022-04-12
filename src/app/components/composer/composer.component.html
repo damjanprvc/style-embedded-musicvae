@@ -159,7 +159,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Attribute Mean</mat-label>
         <mat-select [(value)]="selectedAttribute">
-          <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category}}</mat-option>
+          <mat-option *ngFor="let slider of sliders" [value]="slider.category">{{slider.category | titlecase}}</mat-option>
         </mat-select>
       </mat-form-field>
 
