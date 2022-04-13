@@ -76,7 +76,7 @@ export class ComposerComponent implements OnInit {
 
   fileName: string;
 
-  showAdditionalControl = true;
+  showAdditionalControl = false;
 
   // Drag to upload
   public files: NgxFileDropEntry[] = [];
