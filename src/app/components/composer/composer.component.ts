@@ -232,6 +232,7 @@ export class ComposerComponent implements OnInit {
     }
 
     this.spinner.show();
+    this.resetAllSlider();
     this.files = files;
     for (const droppedFile of files) {
 
@@ -366,11 +367,14 @@ export class ComposerComponent implements OnInit {
     this.showSequenceToUI(sequence);
     this.resetAllSlider();
     this.spinner.hide();
-
   }
 
   async sampleSimilarSequence(): Promise<void> {
     this.spinner.show();
+    // TODO: similarTensors produces an error: Magenta bug?
+    // const similarTensor = await this.model.similarTensors(this.currentZValue, 1, 0.7, this.temperature);
+    // const sequence = await this.model.decode(similarTensor, this.temperature);
+    // this.currentZValue = similarTensor;
     const sequence = await this.model.similar(this.currentNoteSequence[0], 1, 0.7, this.temperature);
     this.currentNoteSequence = sequence;
     this.showSequenceToUI(sequence);
