@@ -92,15 +92,6 @@
       </table>
     </div>
 
-
-<!--    Old-->
-<!--    <input type="file" class="file-upload" onchange="console.log(event.target.files)">-->
-
-<!--    <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>-->
-<!--    <div class="file-upload">-->
-<!--      <button mat-flat-button color="primary" class="upload-btn" (click)="fileUpload.click()">Upload MIDI File</button>-->
-<!--      {{fileName || "No file uploaded yet."}}-->
-<!--    </div>-->
   </div>
 
   <mat-divider style="width: 100%; margin: 1em 0"></mat-divider>
@@ -139,9 +130,6 @@
       <button mat-mini-fab color="primary" (click)="openEmbedOwnStyleDialog()" matTooltip="Add/embed your own style"><mat-icon>add</mat-icon></button>
 
     </mat-card-content>
-    <mat-card-footer>
-      <!--      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>-->
-    </mat-card-footer>
   </mat-card>
 
   <mat-expansion-panel *ngIf="showAdditionalControl" (opened)="panelOpenState = true"

@@ -27,9 +27,7 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": [
-              "src/assets/NexusUI.js"
-            ],
+            "scripts": [],
             "allowedCommonJsDependencies": [
               "@magenta/music/es6/music_vae",
               "@magenta/music/es6/core",

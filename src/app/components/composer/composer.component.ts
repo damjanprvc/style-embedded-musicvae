@@ -16,8 +16,6 @@ import {MatSliderChange} from '@angular/material/slider';
 import {NoteSequence} from '@magenta/music/es6';
 import {midiFilesCatchy, midiFilesDark, midiFilesEDM, midiFilesEmotional, midiFilesPop, midiFilesRnB} from '../../../assets/midi.js';
 import {midiFilesCatchy16Bar, midiFilesDark16Bar, midiFilesEDM16Bar, midiFilesEmotional16Bar, midiFilesPop16Bar} from '../../../assets/midi.js';
-// declare var NexusUI: any;
-import * as Nexus from '../../../assets/NexusUI.js';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -26,7 +24,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {DialogEmbedOwnStyleComponent} from '../../dialogs/dialog-embed-own-style/dialog-embed-own-style.component';
 import soundfontJson from '../../../assets/soundfont.json';
 import styleMeansJson from '../../../assets/style-means.json';
-import mahalanobis from 'mahalanobis';
 
 interface ModelCheckpoint {
   id: string;
@@ -83,31 +80,17 @@ export class ComposerComponent implements OnInit {
 
   // Drag to upload
   public files: NgxFileDropEntry[] = [];
-  // old
-  // files: File[] = [];
-  // validComboDrag: any;
-  // invalidComboDrag: any;
 
   SNACKBAR_DURATION = 3 * 1000;
   isLoading = false;
 
   svgId = 'svg_visualizer';
 
-  // public sliders: Array<{category: string, value: number, mean: tf.Tensor}> = [{category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}, {category: 'adasd', value: 0, mean: null}];
   public sliders: Array<{category: string, value: number, mean: tf.Tensor}> = [];
   public previousSlidersState: Array<{category: string, value: number}> = [];
   selectedAttribute: string;
 
   panelOpenState = false;
-
-  // Play with this to get back a larger or smaller blend of melodies
-  numInterpolations = 4; // numInterpolations containing 32 notes
-
-  // generates an array where indices correspond to midi notes
-  // tslint:disable-next-line:only-arrow-functions
-  everyNote = 'C,C#,D,D#,E,F,F#,G,G#,A,A#,B,'.repeat(20).split(',').map( function(x, i): string {
-    return x + '' + Math.floor(i / 12);
-  });
 
   constructor(private attributeVectorService: AttributeVectorService, private spinner: NgxSpinnerService,
               private snackBar: MatSnackBar, public dialog: MatDialog) { }
@@ -551,114 +534,4 @@ export class ComposerComponent implements OnInit {
     });
   }
 
-  // returns the midi pitch value for the given note.
-  // returns -1 if not found
-  toMidi(note): any {
-    return this.everyNote.indexOf(note);
-  }
-
-  // onFileSelected(event: Event): void {
-  //   const target = event.target as HTMLInputElement;
-  //   const file: File = target.files[0];
-  //   console.log(file);
-  //
-  //   if (file.type === 'audio/mid') {
-  //     this.fileName = file.name;
-  //
-  //     blobToNoteSequence(file).then(r => console.log(r));
-  //   }
-  // }
-
-  // async onSliderChange(id: string): Promise<void> {
-  //   this.isLoading = true;
-  //
-  //   // console.log('current slider value: ' + this.value);
-  //
-  //   switch (id) {
-  //     case 'slider-beauty': {
-  //       console.log('slider-beauty triggered');
-  //       if (this.valueSliderBeauty > 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.add(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('beauty'), tf.scalar(this.valueSliderBeauty)));
-  //         console.log('zWithAttribute:');
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderBeauty < 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.sub(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('beauty'), tf.scalar(this.valueSliderBeauty * -1)));
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderBeauty === 0) {
-  //         const sequence = await this.model.decode(this.currentZValue as tf.Tensor2D, 1.0);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //       break;
-  //     }
-  //     case 'slider-dark': {
-  //       console.log('slider-dark triggered');
-  //       if (this.valueSliderDark > 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.add(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('dark'), tf.scalar(this.valueSliderDark)));
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderDark < 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.sub(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('dark'), tf.scalar(this.valueSliderDark * -1)));
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderDark === 0) {
-  //         const sequence = await this.model.decode(this.currentZValue as tf.Tensor2D, 1.0);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //       break;
-  //     }
-  //     case 'slider-hiphop': {
-  //       console.log('slider-hiphop triggered');
-  //       if (this.valueSliderHiphop > 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.add(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('hiphop'), tf.scalar(this.valueSliderHiphop)));
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderHiphop < 0) {
-  //         // tslint:disable-next-line:max-line-length
-  //         const zWithAttribute = tf.sub(this.currentZValue, tf.mul(this.attributeVectorsZMeanMap.get('hiphop'), tf.scalar(this.valueSliderHiphop * -1)));
-  //         console.log(zWithAttribute.toString(true));
-  //         const sequence = await this.model.decode(zWithAttribute as tf.Tensor2D);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //
-  //       if (this.valueSliderHiphop === 0) {
-  //         const sequence = await this.model.decode(this.currentZValue as tf.Tensor2D, 1.0);
-  //         this.showSequenceToUI(sequence);
-  //       }
-  //       break;
-  //     }
-  //     default: {
-  //       break;
-  //     }
-  //   }
-  //   this.isLoading = false;
-  //
-  // }
-
-  // private showSequenceToUI(sequence: INoteSequence[]): void {
-  //   this.visualizer = new PianoRollCanvasVisualizer(sequence[0],
-  //     document.getElementById(this.canvasId) as HTMLCanvasElement);
-  //   this.currentNoteSequence = sequence;
-  // }
 }
