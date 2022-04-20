@@ -130,6 +130,31 @@ export class ComposerComponent implements OnInit {
     // await this.loadMeanForCategory('emotional', midiFilesEmotional16Bar);
     // await this.loadMeanForCategory('pop', midiFilesPop16Bar);
 
+    // // 16Bar Niko MIDI Set - alternative mean calculation
+    // if (this.selectedCheckpoint.id === 'mel_16bar_small_q2') {
+    //   await this.loadMeanForCategory_V2('catchy', midiFilesCatchy16Bar,
+    //     [midiFilesDark16Bar, midiFilesEDM16Bar, midiFilesEmotional16Bar, midiFilesPop16Bar]);
+    //   await this.loadMeanForCategory_V2('dark', midiFilesDark16Bar,
+    //     [midiFilesCatchy16Bar, midiFilesEDM16Bar, midiFilesEmotional16Bar, midiFilesPop16Bar]);
+    //   await this.loadMeanForCategory_V2('edm', midiFilesEDM16Bar,
+    //     [midiFilesDark16Bar, midiFilesCatchy16Bar, midiFilesEmotional16Bar, midiFilesPop16Bar]);
+    //   return;
+    // }
+    //
+    // Niko MIDI Set - alternative mean calculation
+    // await this.loadMeanForCategory_V2('catchy', midiFilesCatchy,
+    //   [midiFilesDark, midiFilesEDM, midiFilesEmotional, midiFilesPop, midiFilesRnB]);
+    // await this.loadMeanForCategory_V2('dark', midiFilesDark,
+    //   [midiFilesCatchy, midiFilesEDM, midiFilesEmotional, midiFilesPop, midiFilesRnB]);
+    // await this.loadMeanForCategory_V2('edm', midiFilesEDM,
+    //   [midiFilesDark, midiFilesCatchy, midiFilesEmotional, midiFilesPop, midiFilesRnB]);
+    // await this.loadMeanForCategory_V2('emotional', midiFilesEmotional,
+    //   [midiFilesCatchy, midiFilesDark, midiFilesEDM, midiFilesPop, midiFilesRnB]);
+    // await this.loadMeanForCategory_V2('pop', midiFilesPop,
+    //   [midiFilesDark, midiFilesCatchy, midiFilesEmotional, midiFilesEDM, midiFilesRnB]);
+    // await this.loadMeanForCategory_V2('rnb', midiFilesRnB,
+    //   [midiFilesCatchy, midiFilesDark, midiFilesEDM, midiFilesPop, midiFilesEmotional]);
+
     // Load style means from file
     if (this.selectedCheckpoint.id === 'mel_2bar_small') {
       await this.loadMeanForCategoryFromFile('catchy', this.selectedCheckpoint.id);
@@ -335,6 +360,92 @@ export class ComposerComponent implements OnInit {
     z.dispose();
   }
 
+  /**
+   * An experiment to calculate the style mean, by subtracting the mean vector
+   * for melodies not corresponding to the given style from
+   * the mean vector for the given style (White, 2016 - Sampling Generative Networks - Attribute Vectors)
+   * mean = categoryMean - meanNegativeCategories
+   * @private
+   * category: category name
+   * midiFilesUrl: category melodies
+   * midiFilesUrlNegative: melodies not corresponding to style 'category'
+   */
+  private async loadMeanForCategory_V2(category: string, midiFilesUrl: string[], midiFilesUrlNegative: string[][]): Promise<void> {
+    const melodies: NoteSequence[] = [];
+    console.log(midiFilesUrlNegative);
+
+    for (const midi of midiFilesUrl) {
+      const sequence = await urlToNoteSequence(midi as string);
+      melodies.push(sequence);
+    }
+
+    // 1. Encode the input into MusicVAE, get back a z.
+    const quantizedMels: NoteSequence[] = [];
+    melodies.forEach((m) => quantizedMels.push(sequences.quantizeNoteSequence(m, 4)));
+
+    // 1b. Split this sequence into 2 bar chunks.
+    let chunks: NoteSequence[] = [];
+    quantizedMels.forEach((m) => {
+      // if you want to split the sequence into 2 bar chunks,
+      // then if the sequence has 16th note quantization,
+      // that will be 32 steps for each 2 bars (so a chunkSize of 32)
+      const length = 16 * this.MEL_BARS; // = 32
+      const melChunks = sequences.split(sequences.clone(m), length);
+      chunks = chunks.concat(melChunks); // Array of 2 bar chunks
+    });
+
+    // Get for every chunk a MusicVAE z value
+    const z = await this.model.encode(chunks);  // shape of z is [chunks, 256]
+    const attributeVectorZMean = z.mean(0, true); // mean of all chunks. Shape: [1, 256]
+    z.print(true);
+
+    // Embedding the negative melodies
+    const negativeMelodies: NoteSequence[] = [];
+    for (const negativeCategoryMidiFiles of midiFilesUrlNegative) {
+      for (const midi of negativeCategoryMidiFiles) {
+        const sequence = await urlToNoteSequence(midi as string);
+        negativeMelodies.push(sequence);
+      }
+    }
+
+    // 1. Encode the input into MusicVAE, get back a z.
+    const quantizedNegativeMels: NoteSequence[] = [];
+    negativeMelodies.forEach((m) => quantizedNegativeMels.push(sequences.quantizeNoteSequence(m, 4)));
+
+    // 1b. Split this sequence into 2 bar chunks.
+    let chunksNegative = [];
+    quantizedNegativeMels.forEach((m) => {
+      // if you want to split the sequence into 2 bar chunks,
+      // then if the sequence has 16th note quantization,
+      // that will be 32 steps for each 2 bars (so a chunkSize of 32)
+      const length = 16 * this.MEL_BARS; // = 32
+      const melChunks = sequences.split(sequences.clone(m), length);
+      chunksNegative = chunksNegative.concat(melChunks); // Array of 2 bar chunks
+    });
+
+    // Get for every chunk a MusicVAE z value
+    const zNegative = await this.model.encode(chunksNegative);  // shape of z is [chunks, 256]
+    const attributeVectorZMeanNegative = zNegative.mean(0, true); // mean of all chunks. Shape: [1, 256]
+
+    const finalZMean = tf.sub(attributeVectorZMean, attributeVectorZMeanNegative);
+    this.sliders.push({category, value: 0, mean: finalZMean});
+    this.previousSlidersState.push({category, value: 0});
+
+    zNegative.print(true);
+    attributeVectorZMean.print(true);
+    attributeVectorZMeanNegative.print(true);
+    finalZMean.print(true);
+    // console.log(category + '-mean :');
+    // console.log(JSON.stringify(attributeVectorZMean.arraySync()));
+
+    // Prints Variances
+    // console.log(category + ' Variance:');
+    // this.attributeVectorService.printVarianceFor(z, attributeVectorZMean as tf.Tensor2D);
+
+    z.dispose();
+    zNegative.dispose();
+  }
+
   async sampleNewSequence(): Promise<void> {
     this.spinner.show();
 
@@ -464,6 +575,18 @@ export class ComposerComponent implements OnInit {
       return obj.category === category;
     });
 
+    // Linear interpolation between currentZValue and the toggled sliders' mean
+    // const currentSliderMean = currentSliderObj.mean as tf.Tensor2D;
+    // const z1 = tf.mul(tf.scalar(currentSliderObj.value / 10), currentSliderMean);
+    // const z2 = tf.mul(tf.scalar(1 - (currentSliderObj.value / 10)), this.currentZValue);
+    // const zWithAttribute = tf.add(z1, z2) as tf.Tensor2D;
+    // const outputSequence: INoteSequence[] = await this.model.decode(zWithAttribute);
+    // this.currentZValue.print();
+    // this.currentZValue = zWithAttribute;
+    // this.currentNoteSequence = outputSequence;
+    // this.showSequenceToUI(outputSequence);
+
+    // Add
     if (previousSliderObj.value < currentSliderObj.value) {
       const valueChange = (currentSliderObj.value - previousSliderObj.value);
       console.log('Added: ' + valueChange);
@@ -479,6 +602,7 @@ export class ComposerComponent implements OnInit {
       zWithAttribute.print();
     }
 
+    // Subtract
     if (previousSliderObj.value > currentSliderObj.value) {
       const valueChange = (previousSliderObj.value - currentSliderObj.value);
       console.log('Subtracted: ' + valueChange);
