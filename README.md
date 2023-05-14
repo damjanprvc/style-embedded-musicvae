@@ -1,6 +1,15 @@
-# MagentaApp
+# ReStyle-MusicVAE - Style Embedded Google MusicVAE
+
+ReStyle-MusicVAE, is a system for human-AI co-creation in music composition. More specifically, ReStyle-MusicVAE combines the automatic melody generation and variation approach of MusicVAE and adds semantic control dimensions to further steer the process. To this end, expert-annotated melody lines created for music production are used to define stylistic anchors, which serve as semantic references for interpolation. We present an easy-to-use web app built on top of the Magenta.js JavaScript library and pre-trained MusicVAE checkpoints.
+
+----
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
+
+## Install The Angular CLI
+
+`npm install -g @angular/cli`
+Additionaly for Windows machines, run this: `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
 
 ## Development server
 
