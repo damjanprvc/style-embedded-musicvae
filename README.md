@@ -2,6 +2,13 @@
 
 ReStyle-MusicVAE, is a system for human-AI co-creation in music composition. More specifically, ReStyle-MusicVAE combines the automatic melody generation and variation approach of MusicVAE and adds semantic control dimensions to further steer the process. To this end, expert-annotated melody lines created for music production are used to define stylistic anchors, which serve as semantic references for interpolation. We present an easy-to-use web app built on top of the Magenta.js JavaScript library and pre-trained MusicVAE checkpoints.
 
+## How to run
+
+The project relies on pretrained MusicVAE checkpoints. The checkpoints can either be used local or the hosted by Google Magenta ones.
+Select the appropriate option in the `composer.components.ts` file. (Go to https://goo.gl/magenta/musicvae-checkpoints to see all checkpoint urls)
+
+Run as usual: `ng serve`
+
 ----
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
