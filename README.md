@@ -1,6 +1,34 @@
 # ReStyle-MusicVAE - Style Embedded Google MusicVAE
 
-ReStyle-MusicVAE, is a system for human-AI co-creation in music composition. More specifically, ReStyle-MusicVAE combines the automatic melody generation and variation approach of MusicVAE and adds semantic control dimensions to further steer the process. To this end, expert-annotated melody lines created for music production are used to define stylistic anchors, which serve as semantic references for interpolation. We present an easy-to-use web app built on top of the Magenta.js JavaScript library and pre-trained MusicVAE checkpoints.
+[![Demo](https://img.shields.io/badge/Web-Demo-blue)](https://restyle-musicvae.web.app)
+[![Paper](https://img.shields.io/badge/Paper-3511047.3536412-red)](https://dl.acm.org/doi/10.1145/3511047.3536412)
+
+## Abstract
+Deep generative models have emerged as one of the most actively researched topics in artificial intelligence. An area that draws increasing attention is the automatic generation of music, with various applications including systems that support and inspire the process of music composition. For these assistive systems, in order to be successful and accepted by users, it is imperative to give the user agency and express their personal style in the process of composition.
+
+In this paper, we demonstrate ReStyle-MusicVAE, a system for human-AI co-creation in music composition. More specifically, ReStyle-MusicVAE combines the automatic melody generation and variation approach of MusicVAE and adds semantic control dimensions to further steer the process. To this end, expert-annotated melody lines created for music production are used to define stylistic anchors, which serve as semantic references for interpolation. We present an easy-to-use web app built on top of the Magenta.js JavaScript library and pre-trained MusicVAE checkpoints.
+
+For more details, please see:
+"[ReStyle-MusicVAE: Enhancing User Control of Deep Generative Music Models with Expert Labeled Anchors](https://dl.acm.org/doi/10.1145/3511047.3536412)", [Damjan Prvulovic](https://damjanprvulovic.vercel.app/), [Richard Vogl](https://www.ifs.tuwien.ac.at/~vogl/), [Peter Knees](https://www.ifs.tuwien.ac.at/~knees/). ACM, 2022. If you use ideas or code from this work, please cite our paper:
+
+```BibTex
+@inproceedings{10.1145/3511047.3536412,
+author = {Prvulovic, Damjan and Vogl, Richard and Knees, Peter},
+title = {ReStyle-MusicVAE: Enhancing User Control of Deep Generative Music Models with Expert Labeled Anchors},
+year = {2022},
+isbn = {9781450392327},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3511047.3536412},
+doi = {10.1145/3511047.3536412},
+booktitle = {Adjunct Proceedings of the 30th ACM Conference on User Modeling, Adaptation and Personalization},
+pages = {63–66},
+numpages = {4},
+keywords = {user control, variational auto encoder, music generation},
+location = {Barcelona, Spain},
+series = {UMAP '22 Adjunct}
+}
+```
 
 ## How to run
 
